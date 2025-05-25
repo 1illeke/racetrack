@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/racetrack.ico">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="css/leaderboard.css">
+    <link rel="stylesheet" href="css/util/race-info.css">
+    <link rel="stylesheet" href="css/util/flag.css">
+  </head>
+  <body>
+    <div class="background-container"></div>
+    <div class="content-container">
+      <div class="container">
+        <div class="leaderboard">
+          <h2>Leaderboard</h2>
+          
+          <div class="race-status">
+            <div class="timer-box">
+              <div id="race-timer" class="timer">00:00</div>
+              <div class="timer-label">Race Time</div>
+            </div>
+            <div class="flag-box">
+              <div class="current-flag">
+                Current Flag: <span id="current-flag">none</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="current-race" class="race">
+            <div class="race-info">
+              <strong>Race #1</strong>
+              <small>12:00 PM</small>
+            </div>
+            <div class="race-details" id="driver-1">
+              <div class="car-number">#1</div>
+              <div class="driver-name">Driver 1</div>
+              <div class="lap-time">01:31</div>
+            </div>
+            <div class="race-details" id="driver-2">
+              <div class="car-number">#2</div>
+              <div class="driver-name">Driver 2</div>
+              <div class="lap-time">01:32</div>
+            </div>
+            <div class="race-details" id="driver-3">
+              <div class="car-number">#3</div>
+              <div class="driver-name">Driver 3</div>
+              <div class="lap-time">01:33</div>
+            </div>
+            <div class="race-details" id="driver-4">
+              <div class="car-number">#4</div>
+              <div class="driver-name">Driver 4</div>
+              <div class="lap-time">01:34</div>
+            </div>
+            <div class="race-details" id="driver-5">
+              <div class="car-number">#5</div>
+              <div class="driver-name">Driver 5</div>
+              <div class="lap-time">01:35</div>
+            </div>
+            <div class="race-details" id="driver-6">
+              <div class="car-number">#6</div>
+              <div class="driver-name">Driver 6</div>
+              <div class="lap-time">01:36</div>
+            </div>
+            <div class="race-details" id="driver-7">
+              <div class="car-number">#7</div>
+              <div class="driver-name">Driver 7</div>
+              <div class="lap-time">01:37</div>
+            </div>
+            <div class="race-details" id="driver-8">
+              <div class="car-number">#8</div>
+              <div class="driver-name">Driver 8</div>
+              <div class="lap-time">01:38</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+
+      function formatTime(stamp){
+	stamp = new Date(stamp)
+	const min = ("0"+stamp.getMinutes()).slice(-2)
+	const sec = ("0"+stamp.getSeconds()).slice(-2)
+	const ms = ("00"+stamp.getMilliseconds()).slice(-3)
+	return `${min}:${sec}.${ms}`
+      }
+
+      const RaceMode = {
+	SAFE: 0,
+	HAZARD: 1,
+	DANGER: 2,
+	FINISH: 3,
+      }
+      const socket = io({ transports: ['websocket'] })
+
+      let drivers = []
+      socket.on('race-update', function(race) {
+	race = race || {mode: RaceMode.SAFE, drivers:[]}
+
+	let flag = window['current-flag']
+	switch(race.mode){
+	  case RaceMode.SAFE:
+	    flag.style.background = 'green'
+	    flag.textContent = 'SAFE'
+	    break
+	  case RaceMode.HAZARD:
+	    flag.style.background = 'yellow'
+	    flag.textContent = 'HAZARD'
+	    break
+	  case RaceMode.DANGER:
+	    raceTimeElement.textContent = '00:00'
+	    flag.style.background = 'red'
+	    flag.textContent = 'DANGER'
+	    break
+	  case RaceMode.FINISH:           
+	    raceTimeElement.textContent = '00:00'
+	    flag.style.background = 'white'
+	    flag.textContent = 'FINISH'
+	    break
+	}
+
+	drivers = race.drivers.filter(d => d.firstLap !== undefined && d.laps !== undefined && d.laps.length > 0)
+	drivers.sort((a,b) => {
+	  return Math.min(...a.laps) - Math.min(...b.laps)
+	})
+
+	window['current-race'].innerHTML = drivers.map(function(driver, index){
+	  return `<div class="race-details" id="driver-${index}">
+	      <div class="car-number">#${driver.carNumber}</div>
+	      <div class="driver-name">${driver.name}</div>
+	      <div class="lap-time">Fastest lap: ${formatTime(Math.min(...driver.laps))}</div>
+	      <div class="lap-time current-lap-time"></div>
+	    </div>`
+	}).join('')
+
+	drivers.forEach((driver, index) => {
+	  let lapTime = Date.now() - driver.laps.reduce((sum,a)=>sum+a,driver.firstLap)
+	  window[`driver-${index}`].querySelector('.current-lap-time').textContent = 'Current lap: '+formatTime(lapTime)
+	})
+      })
+
+      const raceTimeElement = document.getElementById('race-timer')
+      socket.on('timer-update', (raceEnd) =>{
+	let timeToFinish = new Date(Math.max(0, raceEnd-Date.now()))
+	const min = ("0"+timeToFinish.getMinutes()).slice(-2)
+	const sec = ("0"+timeToFinish.getSeconds()).slice(-2)
+
+	drivers.forEach((driver, index) => {
+	  let lapTime = Date.now() - driver.laps.reduce((sum,a)=>sum+a,driver.firstLap)
+	  window[`driver-${index}`].querySelector('.current-lap-time').textContent = 'Current lap: '+formatTime(lapTime)
+	})
+
+
+	raceTimeElement.textContent = `${min}:${sec}`
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/racetrack.ico">
+    <title>Front Desk</title>
+    <link rel="stylesheet" href="css/util/glow-on-hover.css">
+    <link rel="stylesheet" href="css/util/logout.css">
+    <link rel="stylesheet" href="css/util/race-info.css">
+    <link rel="stylesheet" href="css/front-desk.css">
+  </head>
+  <body>
+    <div class="background-container"></div>
+    <div class="wrapper">
+      <button class="cta top-right" onclick="logout()">
+	<span id="logout-text">LOGOUT</span>
+	<span id="logout-icon">
+	  <svg width="40px" height="26px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	    <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+	    <path class="one" d="M40.1543933,3.89485454 L43.9763149,0.139296592 C44.1708311,-0.0518420739 44.4826329,-0.0518571125 44.6771675,0.139262789 L65.6916134,20.7848311 C66.0855801,21.1718824 66.0911863,21.8050225 65.704135,22.1989893 C65.7000188,22.2031791 65.6958657,22.2073326 65.6916762,22.2114492 L44.677098,42.8607841 C44.4825957,43.0519059 44.1708242,43.0519358 43.9762853,42.8608513 L40.1545186,39.1069479 C39.9575152,38.9134427 39.9546793,38.5968729 40.1481845,38.3998695 C40.1502893,38.3977268 40.1524132,38.395603 40.1545562,38.3934985 L56.9937789,21.8567812 C57.1908028,21.6632968 57.193672,21.3467273 57.0001876,21.1497035 C56.9980647,21.1475418 56.9959223,21.1453995 56.9937605,21.1432767 L40.1545208,4.60825197 C39.9574869,4.41477773 39.9546013,4.09820839 40.1480756,3.90117456 C40.1501626,3.89904911 40.1522686,3.89694235 40.1543933,3.89485454 Z" fill="#FFFFFF"></path>
+	    <path class="two" d="M20.1543933,3.89485454 L23.9763149,0.139296592 C24.1708311,-0.0518420739 24.4826329,-0.0518571125 24.6771675,0.139262789 L45.6916134,20.7848311 C46.0855801,21.1718824 46.0911863,21.8050225 45.704135,22.1989893 C45.7000188,22.2031791 45.6958657,22.2073326 45.6916762,22.2114492 L24.677098,42.8607841 C24.4825957,43.0519059 24.1708242,43.0519358 23.9762853,42.8608513 L20.1545186,39.1069479 C19.9575152,38.9134427 19.9546793,38.5968729 20.1481845,38.3998695 C20.1502893,38.3977268 20.1524132,38.395603 20.1545562,38.3934985 L36.9937789,21.8567812 C37.1908028,21.6632968 37.193672,21.3467273 37.0001876,21.1497035 C36.9980647,21.1475418 36.9959223,21.1453995 36.9937605,21.1432767 L20.1545208,4.60825197 C19.9574869,4.41477773 19.9546013,4.09820839 20.1480756,3.90117456 C20.1501626,3.89904911 20.1522686,3.89694235 20.1543933,3.89485454 Z" fill="#FFFFFF"></path>
+	    <path class="three" d="M0.154393339,3.89485454 L3.97631488,0.139296592 C4.17083111,-0.0518420739 4.48263286,-0.0518571125 4.67716753,0.139262789 L25.6916134,20.7848311 C26.0855801,21.1718824 26.0911863,21.8050225 25.704135,22.1989893 C25.7000188,22.2031791 25.6958657,22.2073326 25.6916762,22.2114492 L4.67709797,42.8607841 C4.48259567,43.0519059 4.17082418,43.0519358 3.97628526,42.8608513 L0.154518591,39.1069479 C-0.0424848215,38.9134427 -0.0453206733,38.5968729 0.148184538,38.3998695 C0.150289256,38.3977268 0.152413239,38.395603 0.154556228,38.3934985 L16.9937789,21.8567812 C17.1908028,21.6632968 17.193672,21.3467273 17.0001876,21.1497035 C16.9980647,21.1475418 16.9959223,21.1453995 16.9937605,21.1432767 L0.15452076,4.60825197 C-0.0425130651,4.41477773 -0.0453986756,4.09820839 0.148075568,3.90117456 C0.150162624,3.89904911 0.152268631,3.89694235 0.154393339,3.89485454 Z" fill="#FFFFFF"></path>
+	    </g>
+	  </svg>
+	</span> 
+      </button>
+      <button class="cta top-left" onclick="window.location.href='leader-board'">leaderboard</button>
+    </div>
+    <div class="content-container">
+      <div class="container">
+	<div class="upcoming-races">
+	  <h2>Races</h2>
+	  <button class="edit-button glow-on-hover" onclick="toggleEditMode()">Edit Races</button>
+	  <div class="races-container">
+	  </div>
+	</div>
+	<div class="action-buttons">
+	  <button class="big-button glow-on-hover" onclick="openNewSessionModal()">Add New Session</button>
+	  <button class="big-button glow-on-hover" onclick="openAddDriverModal()">Add New Driver</button>
+	</div>
+      </div>
+    </div>
+
+    <!-- New Session Modal -->
+    <div id="new-session-modal" class="modal">
+      <div class="modal-content">
+	<!--<h2>New Session</h2>-->
+	<label for="race-time">Race Time:</label>
+	<input class="input-field" type="datetime-local" id="race-time" name="race-time">
+	<div id="drivers-container">
+	  <div class="driver-input">
+	    <label for="driver-name-1">Driver Name:</label>
+	    <select class="input-field" id="driver-name-1" name="driver-name-1">
+	      <!-- Options will be populated dynamically -->
+	    </select>
+	    <label for="car-number-1">Car Number:</label>
+	    <input class="input-field" type="number" id="car-number-1" name="car-number-1" min="1" max="8" placeholder="1-8">
+	  </div>
+	</div>
+	<button class="glow-on-hover" onclick="addDriverInput()">Add Driver</button>
+	<button class="glow-on-hover" onclick="removeDriverInput()">Remove Last Driver</button>
+	<button class="glow-on-hover" onclick="saveSession()">Save Session</button>
+	<button class="glow-on-hover" onclick="cancelSession()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div id="add-driver-modal" class="modal">
+      <div class="modal-content">
+	<h2>Add New Driver</h2>
+	<input class="input-field" type="text" id="new-driver-name" placeholder="Enter driver name">
+	<button class="glow-on-hover" onclick="addDriver()">Add Driver</button>
+	<div id="driver-list">
+	  <!-- Existing drivers will be listed here -->
+	</div>
+	<button class="glow-on-hover" onclick="saveDrivers()">Save Drivers</button>
+	<button class="glow-on-hover" onclick="cancelAddDriver()">Cancel</button>
+      </div>
+    </div>
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+      const socket = io({ transports: ['websocket'] })
+      let driversList = []
+
+      function updateDriverList() {
+	const driverListContainer = document.getElementById('driver-list')
+	driverListContainer.innerHTML = driversList.map(
+	  (driver, index) => `
+	<div class="driver-item">
+	<input class="input-field" type="text" value="${driver}" onchange="editDriverName(${index}, this.value)">
+	<button class="remove-driver-button" onclick="removeDriver(${index})">Remove</button>
+	</div>`).join('')
+      }
+
+      socket.on('driver-update', function(drivers){
+	driversList = drivers
+      })
+
+      function openAddDriverModal() {
+	document.getElementById('add-driver-modal').style.display = 'block'
+	updateDriverList()
+      }
+
+
+      function addDriver() {
+	const newDriverName = document.getElementById('new-driver-name').value.trim()
+	document.getElementById('new-driver-name').value = ''
+	if (newDriverName && !driversList.includes(newDriverName)) {
+	  driversList.push(newDriverName)
+	  updateDriverList()
+	} else {
+	  alert('Driver name must be unique and not empty.')
+	}
+      }
+
+      function editDriverName(index, newName) {
+	const driver = driversList[index]
+	if (newName && !driversList.some(d => d.name === newName)) {
+	  driversList[index].name = data.name
+	  updateDriverList()
+	}
+      }
+      function removeDriver(index) { const driver = driversList[index]
+	driversList.splice(index, 1)
+	updateDriverList()
+      }
+
+      function saveDrivers() {
+	socket.emit('driver-update', driversList)
+	document.getElementById('add-driver-modal').style.display = 'none'
+      }
+
+      function cancelAddDriver() {
+	document.getElementById('add-driver-modal').style.display = 'none'
+      }
+      function openNewSessionModal() {
+	populateDriverOptions()
+	document.getElementById('new-session-modal').style.display = 'block'
+      }
+
+      function addDriverInput() {
+	const driversContainer = document.getElementById('drivers-container')
+	if (driversContainer.children.length >= 8) {
+	  alert('Maximum of 8 drivers can be added.')
+	  return
+	}
+	const driverCount = driversContainer.children.length + 1
+	const newDriverInput = document.createElement('div')
+	newDriverInput.className = 'driver-input'
+	newDriverInput.innerHTML = `
+    <label for="driver-name-${driverCount}">Driver Name:</label>
+    <select class="input-field" id="driver-name-${driverCount}" name="driver-name-${driverCount}">
+    <option value="" disabled selected>Select a driver</option>
+    ${driversList.map(driver => `<option value="${driver}">${driver}</option>`).join('')}
+  </select>
+    <label for="car-number-${driverCount}">Car Number:</label>
+    <input class="input-field" type="number" id="car-number-${driverCount}" name="car-number-${driverCount}" min="1" max="8" placeholder="1-8">
+    `
+	driversContainer.appendChild(newDriverInput)
+	populateDriverOptions()
+	return newDriverInput
+      }
+
+      function removeDriverInput() {
+	const driversContainer = document.getElementById('drivers-container')
+	if (driversContainer.children.length > 1) {
+	  driversContainer.removeChild(driversContainer.lastChild)
+	}
+	populateDriverOptions(); 
+      }
+
+      function saveSession() {
+	let error = "";
+	const raceTime = new Date(document.getElementById('race-time').value).valueOf()
+	if (isNaN(raceTime)) error += 'Invalid date.\n'
+	else if (raceTime < Date.now()) error += 'Date cannot be in the past.\n'
+	const driversContainer = document.getElementById('drivers-container')
+	const driverIds = Array.from(driversContainer.children).map(driverInput => {
+	  return driverInput.querySelector('select').value
+	})
+
+	if (driverIds.includes('')) {
+	  error += 'Drivers must have a specified name.\n'
+	}
+
+	const carNumbers = Array.from(driversContainer.children).map(driverInput => {
+	  const carNumberInput = driverInput.querySelector('input[type="number"]')
+	  return carNumberInput.value ? parseInt(carNumberInput.value, 10) : null
+	})
+
+
+
+	const assignedCarNumbers = new Set(carNumbers.filter(num => num !== null))
+	const availableCarNumbers = Array.from({ length: 8 }, (_, i) => i + 1).filter(num => !assignedCarNumbers.has(num))
+
+	const finalCarNumbers = carNumbers.map(num => {
+	  if (num === null) {
+	    const randomIndex = Math.floor(Math.random() * availableCarNumbers.length)
+	    return availableCarNumbers.splice(randomIndex, 1)[0]
+	  }
+	  return num
+	})
+	if (new Set(finalCarNumbers).size !== finalCarNumbers.length) {
+	  error += 'Each car must have a unique number.\n'
+	}
+	if (error !== '') {
+	  alert(error.trim())
+	  return
+	}
+	let race = {
+	  start: raceTime,
+	  drivers: driverIds.map((id, index) => ({
+	    name: id,
+	    carNumber: finalCarNumbers[index]
+	  }))
+	}
+	if (editedRaceIndex !== -1) {
+	  socket.emit('update-race', editedRaceIndex, race)
+	  editedRaceIndex = -1
+	} else {
+	  socket.emit('add-race', race)
+	}
+	document.getElementById('new-session-modal').style.display = 'none'
+      }
+
+      function cancelSession() {
+	document.getElementById('new-session-modal').style.display = 'none'
+	editedRaceIndex = -1
+      }
+
+      function populateDriverOptions() {
+	const selectedDrivers = new Set(Array.from(document.querySelectorAll('#drivers-container select')).map(select => select.value))
+	const driverSelects = document.querySelectorAll('#drivers-container select')
+	driverSelects.forEach(select => {
+	  const currentSelection = select.value
+	  select.innerHTML = driversList.map(driver => {
+	    if (!selectedDrivers.has(driver) || driver === currentSelection) {
+	      return `<option value="${driver}">${driver}</option>`
+	    }
+	    return ''
+	  }).join('')
+	  select.value = currentSelection; 
+	})
+      }
+
+      let editMode = false
+
+      let editedRaceIndex = -1
+
+      function toggleEditMode() {
+	editMode = !editMode
+	const races = document.querySelectorAll('.race')
+	races.forEach(race => {
+	  if (editMode) {
+	    race.classList.add('edit-mode')
+	  } else {
+	    race.classList.remove('edit-mode')
+	  }
+	})
+      }
+
+      function editRace(index) {
+	editedRaceIndex = index
+	let race = raceSessions[index]
+	let modal = document.getElementById('new-session-modal')
+	let dateString = new Date(race.start).toISOString()
+	dateString = dateString.substring(0, dateString.length-1)
+	modal.querySelector('input.input-field').value = dateString
+	modal.querySelector('#drivers-container').innerHTML = ''
+	for (let driver of raceSessions[index].drivers) {
+	  let input = addDriverInput()
+	  input.querySelector('select.input-field').value = driver.name
+	  input.querySelector('input.input-field').value = driver.carNumber
+	}
+
+	openNewSessionModal()
+      }
+
+      function deleteRace(index) {
+	socket.emit('delete-race', index)
+      }
+
+      let raceSessions = []
+      socket.on('race-session-update', function(sessions){
+	const racesContainer = document.querySelector('.races-container')
+	racesContainer.innerHTML = ''
+	raceSessions = sessions
+
+	sessions.forEach((session, index) => {
+	  if (session.running) return
+	  if (session.finished) return
+	  const raceElement = document.createElement('div')
+	  raceElement.className = `race${editMode ? ' edit-mode' : ''}`
+	  raceElement.innerHTML = `
+	    <div class="race-info">
+	    <!-- <strong>Race #${index+1} ${session.finished ? '(finished)' : ''}</strong> -->
+	    <small>${new Date(session.start).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false })}</small>
+	    </div>
+	    ${session.drivers.map(driver => `
+		<div class="race-details">
+		<div class="car-number">#${driver.carNumber}</div>
+		<div class="driver-name">${driver.name}</div>
+		</div>
+		`).join('')}
+	    <button class="delete-race-button" onclick="deleteRace(${index})">Delete</button>
+	    <button class="edit-race-button" onclick="editRace(${index})">Edit</button>
+	    `
+	      racesContainer.appendChild(raceElement)
+	    })
+	})
+    </script>
+    <script src="js/logout.js"></script>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/racetrack.ico">
+    <title>Next Race</title>
+    <link rel="stylesheet" href="css/next-race.css">
+    <link rel="stylesheet" href="css/util/race-info.css">
+    <link rel="stylesheet" href="css/util/timer.css">
+  </head>
+  <body>
+    <div class="background-container"></div>
+    <div class="content-container">
+      <div id="proceed-message" class="proceed-message">
+	Racers please proceed to the paddock
+      </div>
+      <div class="timer-container">
+	<div class="timer">Time Remaining: <span id="race-timer">00:00</span></div>
+      </div>
+      <div class="races-container">
+	<div id="current-race" class="race current-race">
+	  <h2>Current Race</h2>
+	  <!-- Current race details will be inserted here -->
+	</div>
+	<div id="next-race" class="race next-race">
+	  <h2>Next Race</h2>
+	  <!-- Next race details will be inserted here -->
+	</div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const RaceMode = {
+	SAFE: 0,
+	HAZARD: 1,
+	DANGER: 2,
+	FINISH: 3,
+      }
+
+      const proceedMessage = document.getElementById('proceed-message');
+      const socket = io({ transports: ['websocket'] });
+      socket.on('timer-update', (raceEnd) => {
+	let timeToFinish = new Date(Math.max(0, raceEnd-Date.now()))
+	const min = ("0"+timeToFinish.getMinutes()).slice(-2)
+	const sec = ("0"+timeToFinish.getSeconds()).slice(-2)
+
+
+	document.getElementById('race-timer').textContent = `${min}:${sec}`
+      });
+
+      socket.on('race-session-update', function(sessions){
+	let canStartRace = (sessions.length > 0) && (!sessions[0].running && (!sessions[0].finished) || (sessions[0].finished && sessions.length > 1))
+	proceedMessage.style.display = canStartRace ? '' : 'none'
+	while (sessions[0] && (sessions[0].running || sessions[0].finished)) sessions.shift()
+	displayRaces(sessions)
+      })
+
+      socket.on('race-update', function(race) {
+	if (race.finished) window['race-timer'].textContent = '00:00:000'
+
+	proceedMessage.style.display = (race.finished) ? '' : 'none'
+      })
+
+      function displayRaces(races) {
+	const racesContainer = document.querySelector('.races-container');
+	racesContainer.innerHTML = ''; // Clear existing content
+
+	races.forEach((race, index) => {
+	  const raceElement = document.createElement('div');
+	  if (index === 0) {
+	    raceElement.className = 'race current-race';
+	  } else if (index === 1) {
+	    raceElement.className = 'race next-race';
+	  } else {
+	    raceElement.className = 'race future-race';
+	  }
+
+	  const drivers = race.drivers || []; // Ensure drivers is an array
+	  raceElement.innerHTML = `
+	    <div class="race-info">
+		<strong>Race #${index+1} ${race.finished ? '(finished)' : ''}</strong>
+		<small>${new Date(race.start).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false })}</small>
+	    </div>
+	    ${drivers.map((driver, index) => `
+		<div class="race-details ">
+		    <div class="car-number">#${driver.carNumber}</div>
+		    <div class="driver-name">${driver.name}</div>
+		</div>
+	    `).join('')}
+	`;
+	  racesContainer.appendChild(raceElement);
+	});
+      }
+    </script>
+  </body>
+</html>

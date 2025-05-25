@@ -1,0 +1,25 @@
+body {
+    background-color: #000;
+}
+
+.checkered-flag {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-conic-gradient(#000 0% 25%, #fff 25% 50%);
+    background-size: 200px 200px;
+    background-color: #fff;
+    z-index: 1000;
+    animation: moveCheckered 2s linear infinite;
+}
+/* Just some animation to make the checkered flag look better */
+@keyframes moveCheckered {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 200px 200px;
+    }
+}

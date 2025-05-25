@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Countdown</title>
+    <link rel="stylesheet" href="css/countdown.css">	
+    <link rel="stylesheet" href="css/util/timer.css">
+  </head>
+  <body>
+    <div class="countdown">
+      <div class="countdown-container">
+	<div class="race-number">Race #1</div>
+	<div class="timer">00:00:000</div>
+      </div>
+      <div class="countdown-lights">
+	<div class="countdown-light"></div>
+	<div class="countdown-light"></div>
+	<div class="countdown-light"></div>
+	<div class="countdown-light"></div>
+	<div class="countdown-light"></div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+      const lights = document.querySelectorAll('.countdown-light');
+      let lightIndex = 0;
+      let lightsOn = false;
+      let flashingInterval = null;
+      const raceTimeElement = document.querySelector('.timer');
+      let timerStarted = false; // To track if the timer started already
+
+
+      function turnOnLight(index) {
+	if (index < lights.length) {
+	  lights[index].classList.add('active');
+	}
+      }
+
+      function turnOffAllLights() {
+	lights.forEach(light => light.classList.remove('active'));
+	lightIndex = 0;
+	lightsOn = false;
+	startTimer();
+      }
+
+      function startLightSequence() {
+	if (lightsOn) return;
+	lightsOn = true;
+	lightIndex = 0;
+	const interval = setInterval(() => {
+	  turnOnLight(lightIndex);
+	  lightIndex++;
+	  if (lightIndex >= lights.length) {
+	    clearInterval(interval);
+	    setTimeout(turnOffAllLights, (Math.random() * 2000) + 1000); // 1-3sec
+	  }
+	}, 1000); // 1sec
+      }
+
+      function flashLights(color) {
+	stopFlashing();
+	let flashState = false;
+	flashingInterval = setInterval(() => {
+	  flashState = !flashState;
+	  if(flashState){
+	    lights.forEach((light, index) => {
+	      if (index % 2 === 0) {
+		light.classList.add('active', color);
+	      }
+	    });
+	  }else {
+	    lights.forEach((light, index) => {
+	      if (index % 2 === 0) {
+		light.classList.remove('active', color);
+	      }
+	    });
+	  }
+	}, 300);
+      }
+
+      function stopFlashing() {
+	clearInterval(flashingInterval);
+	lights.forEach(light => {
+	  light.classList.remove('active', 'yellow', 'red');
+	});
+	flashingInterval = null;
+      }
+
+      const RaceMode = {
+	SAFE: 0,
+	HAZARD: 1,
+	DANGER: 2,
+	FINISH: 3,
+      }
+
+      const socket = io({ transports: ['websocket'] });
+      socket.on('timer-update', (raceEnd) =>{
+	let timeToFinish = new Date(Math.max(0, raceEnd-Date.now()))
+	const min = ("0"+timeToFinish.getMinutes()).slice(-2)
+	const sec = ("0"+timeToFinish.getSeconds()).slice(-2)
+	const ms = ("00"+timeToFinish.getMilliseconds()).slice(-3)
+
+	raceTimeElement.textContent = `${min}:${sec}:${ms}`
+      });
+      socket.on('race-update', function(race) {
+	if (race.finished) raceTimeElement.textContent = '00:00:000'
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "racetrack",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "cross-env NODE_ENV=DEVELOPMENT node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitea.kood.tech/eriktobiasloo/racetrack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Racetrack project",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "racetrack": "file:",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.3"
+  },
+  "type": "module",
+  "main": "src/server/main.js",
+  "keywords": []
+}

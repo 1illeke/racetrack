@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Flag Display</title>
+    <link rel="stylesheet" href="css/flag-display.css">
+  </head>
+  <body>
+    <div class="flag-display" id="current-flag"></div>
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+
+      const RaceMode = {
+	SAFE: 0,
+	HAZARD: 1,
+	DANGER: 2,
+	FINISH: 3,
+      }
+
+      // Assuming you have already initialized the socket connection
+      const socket = io({ transports: ['websocket'] });
+
+      socket.on('race-update', (race) => {
+	let mode = race.mode || RaceMode.SAFE
+	console.log(mode)
+	const flagDisplay = document.getElementById('current-flag');
+	const body = document.body;
+	const existingCheckered = document.querySelector('.checkered-flag');
+	if (existingCheckered) {
+	  existingCheckered.remove();
+	}
+
+	if (flagDisplay) {
+	  if (mode === RaceMode.FINISH) {
+	    const checkeredFlag = document.createElement('div');
+	    checkeredFlag.className = 'checkered-flag';
+	    document.body.appendChild(checkeredFlag);
+
+	    let flashCount = 0;
+	    const flashInterval = setInterval(() => {
+	      if (flashCount % 2 === 0) {
+		body.style.backgroundColor = '#000000';
+		checkeredFlag.style.display = 'none';
+	      } else {
+		body.style.backgroundColor = '#000000';
+		checkeredFlag.style.display = 'block';
+	      }
+	      flashCount++;
+	      if (flashCount > 4) {
+		clearInterval(flashInterval);
+		body.style.backgroundColor = '#000000';
+		checkeredFlag.style.display = 'block';
+	      }
+	    }, 400);
+	  } else {
+	    const newColor = getColorForFlag(mode);
+	    const blackColor = '#000000';
+
+	    let flashCount = 0;
+	    const flashInterval = setInterval(() => {
+	      const currentColor = (flashCount % 2 === 0) ? newColor : blackColor;
+	      flagDisplay.style.backgroundColor = currentColor;
+	      body.style.backgroundColor = currentColor;
+	      flashCount++;
+	      if (flashCount > 4) {
+		clearInterval(flashInterval);
+		flagDisplay.style.backgroundColor = newColor;
+		body.style.backgroundColor = newColor;
+	      }
+	    }, 400);
+	  }
+	}
+      });
+
+      function getColorForFlag(mode) {
+	switch (mode) {
+	  case RaceMode.SAFE:
+	    return '#00ff00';
+	  case RaceMode.HAZARD:
+	    return '#ffff00';
+	  case RaceMode.DANGER:
+	    return '#ff0000';
+	}
+      }
+    </script>
+  </body>
+</html>
